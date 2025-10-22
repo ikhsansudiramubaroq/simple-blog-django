@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load static %}
+{% block head_title %}{{title}}{% endblock head_title %}
+
+{% block content %}
+    <div class="container mt-5">
+        <img src="{% static 'img/blog.png' %}" class="mx-auto d-block img-fluid" alt="">
+    </div>
+    <section class="mt-5">
+        <div class="container py-4">
+            <div class="row my-5">
+                <div class="col-md-9">
+                    {% if articles %}
+                        <div class="row mb-5">
+                        {% comment %} looping for articles {% endcomment %}
+                        {% for article in articles %}
+                        <div class="col-md-4">
+                            <div class="card mb-3 border-0 bg-transparent shadow-sm h-100">
+                                <img src="{{ article.images.url }}" class="card-img-top rounded-4 d-block" alt="{{ article.images.url }}">
+                                <div class="card-body">
+                                    <h5 class="card-title mb-1">{{ article.title }}</h5>
+
+                                    {% comment %} tag list {% endcomment %}
+                                    {% comment %} nested loop, mengambil article dari for article diatas {% endcomment %}
+                                    {% for tags in article.tags.all  %}
+                                    {% comment %} tags.slug mengambil dari object tags loop {% endcomment %}
+                                    <a href="{% url 'blog:tags' tags.slug %}" class="text-decoration-none mb-3 d-inline-block">
+                                        <span class="badge text-bg-secondary">{{ tags }}</span>
+                                    </a>
+                                    {% endfor %}
+                                    {% comment %} end tags {% endcomment %}
+
+                                    <p class="card-text"><i class="bi bi-calendar-event" style="color: #C96C25"></i> <small
+                                                class="text-primary">{{ article.publish|date:"j F Y, H.i" }}</small>
+                                    </p>
+                                    <p class="card-text text-black-50">{{ article.fil|truncatewords:10 }}</p>
+                                    <a href="{% url 'blog:detail_article' article.slug %}" class="btn btn-primary shadow-sm text-white">Lengkap</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <p>Mohon Maaf artikel saat ini belum tersedia :)</p>
+                    </div>
+                    {% endif %}
+                    {% comment %} pagination {% endcomment %}
+                    {% comment %} 
+                    {{ articles }} <br>
+                    kembali ke halaman = {{ articles.has_previous }} <br>
+                    lanjut ke halaman = {{ articles.has_next }} <br>
+                    halaman saat ini = {{ articles.number }} <br>
+                    jumlah halaman = {{ articles.paginator.num_pages }} <br>
+                    <br><br>
+                    {% if articles.has_previous %}
+                        <a href="?page=1">&laquo pertama</a>
+                        <a href="?page={{ articles.previous_page_number }}">kembali</a>
+                    {% endif %}
+
+                    halaman {{ articles.number }} dari {{ articles.paginator.num_pages }}
+
+                    {% if articles.has_next %}
+                        <a href="?page={{ articles.next_page_number }}">lanjut</a>
+                        <a href="?page={{ articles.paginator.num_pages }}">terakhir &raquo;</a>
+                    {% endif %}
+                    {% endcomment %}
+
+                    <nav aria-label="Page navigation example shadow-sm">
+                        {% comment %} tidak menampilkan pagination kalau tidak ada halaman selanjutnya {% endcomment %}
+                        {% if articles.has_other_pages %}  
+                        <ul class="pagination pagination-lg">
+                            {% comment %} menampilkan panah dengan nilai true jika ada halaman sebelumnya {% endcomment %}
+                            {% if articles.has_previous %}                            
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ articles.previous_page_number }}" 
+                                    aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            
+                            {% comment %} looping untuk menampilkan nomor halaman {% endcomment %}
+                            {% for i in articles.paginator.page_range  %}
+                                {% if articles.number == i %}
+                                <li class="page-item"><a class="page-link active">{{ i }}</a></li>
+                                {% else %}
+                                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{i}}</a></li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% comment %} menampilkan panah dengan nilai true jika ada halaman selanjutnya {% endcomment %}
+                            {% if articles.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ articles.next_page_number }}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                        {% endif %}
+                    </nav>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            Kategori
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            {% for cat in category_choices  %}
+                                <li class="list-group-item">
+                                    <a href="{% url 'blog:category' cat.slug_cat %}" class="text-dark text-decoration-none">{{ cat.title }}</a>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endblock content %}

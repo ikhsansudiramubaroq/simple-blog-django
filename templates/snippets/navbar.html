@@ -1,0 +1,49 @@
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg bg-transparent">
+    <div class="container">
+        <a class="me-5 navbar-brand fw-bold text-black" href="/">Logo</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                {% with url_name=request.resolver_match.url_name %}
+                <li class="me-5 nav-item">
+                    <a class="{% if url_name == 'index' %}
+                    nav-link fw-bold text-decoration-underline active{% else %}nav-link{% endif %}" aria-current="page" href="{% url "index" %}">Home</a>
+                </li>
+                <li class="me-5 nav-item">
+                    <a class="{% if url_name == 'blog_index' %}
+                    nav-link fw-bold text-decoration-underline active{% else %}nav-link{% endif %}" href="{% url "blog:blog_index" %}">Blog</a>
+                </li>
+                <li class="me-5 nav-item">
+                    <a class="{% if url_name == 'kontak_index' %}
+                    nav-link fw-bold text-decoration-underline active{% else %}nav-link{% endif %}" href="{% url "kontak:kontak_index" %}">Kontak</a>
+                </li>
+                {% endwith %}
+            </ul>
+            <ul class="navbar-nav">
+                {% if request.user.is_authenticated %}
+                    <li class="me-4 nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" role="button" 
+                        data-bs-toggle="dropdown" aria-expanded="false">{{ request.user.email }}</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url "accounts:index" %}">Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'accounts:password_change' %}">Ubah Password</a></li>
+                        </ul>
+                    </li>
+                    <a class="me-4 btn btn-primary shadow-sm text-white" href="{% url 'accounts:logout' %}" type="submit">Logout</a>
+                {% else %}
+                    <li class="me-5 nav-item"><a class="{% if request.resolver_match.url_name == 'register' %}
+                    nav-link fw-bold text-decoration-underline active{% else %}nav-link{% endif %}"
+                        href="{% url 'accounts:register' %}">Daftar</a></li>
+                    <a class="btn btn-primary shadow-sm text-white" href="{% url "accounts:login" %}" type="submit">Login</a>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- Ending Navbar -->

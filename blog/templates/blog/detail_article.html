@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load static %}
+{% block head_title %}{{title}}{% endblock head_title %}
+
+{% block content %}
+ <!-- Blog -->
+ <section class="mt-5">
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card mb-3 border-0 bg-transparent">
+                    <img src="{{ detail_article.images.url }}" class="card-img-top rounded-4 h-50 d-block" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title fs-3 text-primary">{{ detail_article.title }}</h5>
+
+                        {% comment %} tags {% endcomment %}
+                        {% for tags in tags  %}
+                            <a href="{% url 'blog:tags' tags.slug %}" class="text-decoration-none mb-3 d-inline-block">
+                                <span class="badge text-bg-danger">{{ tags }}</span>
+                            </a>
+                        {% endfor %}
+                        {% comment %} and tags {% endcomment %}
+
+
+                        <p class=" card-text">
+                        <ul class="list-inline">
+                            <li class="list-inline-item">
+                                <i class="bi bi-calendar-event"></i>
+                                <small class="text-body-secondary">{{ detail_article.publish }}</small>
+                            </li>
+                            <li class="list-inline-item">
+                                <i class="bi bi-chat-dots-fill"></i>
+                                <small class="text-body-secondary"> {{ comments.count }} Berkomentar</small>
+                            </li>
+                        </ul>
+                        </p>
+                        <p class="card-text justify lh-lg fs-5">{{ detail_article.fil }}</p>
+                    </div>
+                </div>
+
+                <!-- Komentar -->
+                <h5>Komentar {{comments.count}}</h5>
+                {% comment %} form komentar {% endcomment %}
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        {% comment %} form ini diambil dari forms.py yang berisi field comments {% endcomment %}
+                        {{ form.comments }}
+                    </div>
+                    {% comment %} jika user login baru bisa beri komentar {% endcomment %}
+                    {% if request.user.is_authenticated %}
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary mr-auto shadow-sm">Beri komentar</button>
+                    </div>
+                    {% comment %} jika user tidak login tombol beri komentar disabled{% endcomment %}
+                    {% else %}
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary mr-auto shadow-sm disabled">Beri komentar</button>
+                    </div>
+                    {% endif %}
+                </form>
+
+                {% comment %} menampilkan komentar {% endcomment %}
+                {% for comment in comments  %}
+                <div class="d-flex my-5">
+                    <div class="flex-shrink-0">
+                        <img src="{{ comment.user.img_user.url }}" width="50" alt="username">
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h5>{{ comment.user.nama }}</h5>
+                        <small class="text-muted">{{ comment.timestamp }}</small><br>
+                        {{ comment.comments }}
+
+                        {% comment %} tampilkan balas komentar {% endcomment %}
+                        {% for reply in comment.replies.all  %}
+                        <div class="d-flex align-items-center mt-3">
+                            <div class="flex-shrink-0">
+                                <img src="{{ reply.user.img_user.url }}" width="50" alt="username">
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h5>{{ reply.user.nama }}</h5>
+                                <small class="text-muted">{{ reply.timestamp }}</small><br>
+                                {{ reply.comments }}
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                        {% comment %} form balas komentar / reply {% endcomment %}
+                        <div class="d-flex align-items-center mt-2">
+                            <div class="flex-grow-1 ms-3">
+                                <form method="post">
+                                    {% csrf_token %}
+                                    {% comment %} isi dari koemntar induk yang akan dibalas 
+                                    Form reply = “Form komentar dengan tambahan identitas siapa yang dibalas.”{% endcomment %}
+                                    <input type="hidden" name="reply_slug" value="{{ comment.id }}">
+
+                                    {% comment %} form dari field comments {% endcomment %}
+                                    {{ form.comments }}          
+                                        <button type="submit" class="btn btn-primary mr-auto shadow-sm text-white">Reply</button>
+                                </form>
+                            </div>
+                        </div>
+                        {% comment %} end balas komentar/reply {% endcomment %}
+                    </div>
+                </div>
+                {% endfor %}
+                <!-- Ending Komentar -->
+
+                <!-- Blog terkait -->
+                <div class="row">
+                    <h5>Blog terkait:</h5>
+                    {% for other in article_other  %}
+                    <div class="col-md-4">
+                        <div class="card mb-3 border-0 bg-transparent">
+                            <img src="{{ other.images.url }}" class="card-img-top rounded-4 h-50 d-block" alt="{{ other.images.url }}">
+                            <div class="card-body">
+                                <h6 class="card-title"><a class="text-decoration-none text-primary" 
+                                    href="{% url 'blog:detail_article' other.slug %}">{{ other.title }}</a></h6>
+                                <p class="card-text"><i class="bi bi-calendar-event"></i>
+                                    <small class="text-body-secondary">{{ other.publish }}</small>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                </div>
+                <!-- Ending Blog terkait -->
+
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Ending Blog -->
+{% endblock content %}

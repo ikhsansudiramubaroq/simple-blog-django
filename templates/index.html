@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load static %}
+{% block head_title %} {{title}} {% endblock head_title %} 
+
+{% block content %}
+
+<!-- Hero -->
+<section id="hero">
+    <div class="container mt-5">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <img class="mx-auto d-block img-fluid" src="{% static 'img/web developer girl.png' %}" alt="">
+            </div>
+            <div class="col-md-6">
+                <h1>A Web Development</h1>
+                <p class="mt-4 lh-base fs-5 text-black-50">
+                    Seorang web development dengan keahlian membuat sistem
+                    menggunakan web framework Django Python
+                </p>
+                <div class="d-flex flex-row align-items-start">
+                    <div class="me-4 mb-2"><a href="https://github.com/sumsyahrul?tab=repositories"
+                            class="text-black-50"><i class="bi bi-github" style="font-size: 20px;"></i></a></div>
+                    <div class="me-4 mb-2"><a href="#" class="text-black-50"><i class="bi bi-youtube"
+                                style="font-size: 20px;"></i></a>
+                    </div>
+                    <div class="me-4 mb-2"><a href="#" class="text-black-50"><i class="bi bi-discord"
+                                style="font-size: 20px;"></i></a>
+                    </div>
+                    <div class="me-4 mb-2"><a href="#" class="text-black-50"><i class="bi bi-tiktok"
+                                style="font-size: 20px;"></i></a>
+                    </div>
+                </div>
+                <p>Bogor - Indonesia</p>
+                <div class="d-grid col-md-3">
+                    <a class=" btn btn-md btn-outline-primary shadow-sm" href="#">Unduh CV</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Ending Hero -->
+
+<!-- Blog -->
+<section class="bg-secondary mt-5">
+    <div class="container py-4">
+        <h2>Blog</h2>
+        <div class="d-flex justify-content-between">
+            <p class="fs-5 text-black-50">Artikel terbaru dan terupdate tentang teknologi.</p>
+            <p class="link-info fs-5">Lihat semuanya >></p>
+        </div>
+        <div class="row mt-5">
+            {% for articles in article %}
+            <div class="col-md-4">
+                <div class="card mb-3 border-0 bg-transparent">
+                    <img src="{{ articles.images.url }}" class="card-img-top rounded-4 h-50 d-block" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ articles.title }}</h5>
+                        <p class="card-text"><i class="bi bi-calendar-event" style="color: #C96C25"></i>
+                            <small class="text-primary">{{ articles.publish|naturalday:"d F Y" }}</small>
+                        </p>
+                        <p class="card-text text-black-50">{{ articles.fil|truncatewords:12 }}</p>
+                        <a href="{% url "blog:detail_article" articles.slug %}" class="btn btn-primary shadow-sm text-white">Lengkap</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+<!-- Ending Blog -->
+
+<!-- Kontak -->
+<section id="kontak" class="mt-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class=" col-md-6">
+                <h2>Kontak</h2>
+                <p class="fs-5 text-black-50">Kirim saran dan pesan Anda di sini!</p>
+                <form class="pt-3" method="post">
+                    {% csrf_token %}
+                        {% for fields in form  %}
+                        <div class="mb-3">
+                            {% comment %} fields.auto_id untuk mengambil setiap id dari masing-masing field di model {% endcomment %}
+                            <label for="{{ fields.auto_id }}"> {{ fields.label }} </label>
+                            {{ fields }}
+                        </div>
+                        {% endfor %}
+                    <button type="submit" class="btn btn-primary shadow-sm text-white">Kirim</button>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <img src="{% static 'img/kontak girl.png' %}" class="mx-auto d-block img-fluid w-75" alt="">
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Ending Kontak -->
+
+
+{% endblock content %}

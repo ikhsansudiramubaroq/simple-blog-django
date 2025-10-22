@@ -1,0 +1,19 @@
+{% extends "base_404.html" %}
+{% load static %}
+{% block head_title %} {{ title }} {% endblock head_title %}
+
+{% block content %}
+<!-- 404 -->
+<div class="container-fluid text-center mt-5">
+    <!-- Gambar Full Width -->
+    <img src="{% static 'img/404.png' %}" alt="404 Not Found" class="img-fluid w-100" style="max-height: 500px; object-fit: cover;">
+
+    <!-- Tombol Kembali ke Home -->
+    <div class="mt-4">
+        <a href="/" class="btn btn-primary btn-lg">
+            Kembali ke Homepage
+        </a>
+    </div>
+</div>
+<!-- end 404 -->
+{% endblock content %}
