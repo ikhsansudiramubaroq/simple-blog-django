@@ -1,0 +1,19 @@
+# Database
+*.sqlite3 
+
+# Virtual Environment
+.env
+myvenv/
+/env/
+
+# Python compiled files
+__pycache__/
+*.pyc
+
+# Django-specific files
+/static/
+/media/
+
+# IDE files (optional but recommended)
+.vscode/
+.idea/
